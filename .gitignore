@@ -1,0 +1,8 @@
+# Ignorer les gros fichiers de données
+*.csv
+*.xlsx
+data/
+mlruns/
+__pycache__/
+*.log
+
