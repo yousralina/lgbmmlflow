@@ -7,7 +7,7 @@ import os
 app = FastAPI()
 
 # Charger le modèle via MLflow
-model_uri = "file:///C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/mon_projet_api/models/LGBM_Undersampling_Pipeline"
+model_uri = "file:///C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/LGBM_Undersampling_Pipeline"
 try:
     model = mlflow.pyfunc.load_model(model_uri)
 
