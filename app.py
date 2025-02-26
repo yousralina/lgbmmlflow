@@ -7,7 +7,7 @@ import os
 app = FastAPI()
 
 # Charger le modèle via MLflow
-model_uri = "file:///C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/LGBM_Undersampling_Pipeline"
+model_uri = "file:///C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/mon_projet_api/models/LGBM_Undersampling_Pipeline"
 try:
     model = mlflow.pyfunc.load_model(model_uri)
 
@@ -85,4 +85,6 @@ def predict(client: ClientID):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))  
+    uvicorn.run(app, host="0.0.0.0", port=port)
+
