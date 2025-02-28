@@ -3,6 +3,7 @@ import mlflow.pyfunc
 import pandas as pd
 from pydantic import BaseModel
 import os
+port = int(os.environ.get("PORT", 8000))
 
 app = FastAPI()
 
