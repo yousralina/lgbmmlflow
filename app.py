@@ -7,41 +7,37 @@ import os
 app = FastAPI()
 
 # Charger le modèle via MLflow
-model_uri = 'runs:/15a09831c7cc44fe906abf30f8b39a22/LGBM_Undersampling_Pipeline'
+model_uri = "file:///C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/mon_projet_api/models/LGBM_Undersampling_Pipeline"
 try:
-    model = mlflow.pyfunc.load_model(model_uri)
-
-    # Extraire le vrai modèle LightGBM s'il est encapsulé
+    model = mlflow.pyfunc.load_model(model_uri)  # Extraire le vrai modèle LightGBM s'il est encapsulé
     if hasattr(model, "unwrap_python_model"):
         model = model.unwrap_python_model().model  # Accède à l'attribut 'model' de CustomModel
-
-    # Vérifier que le modèle possède bien 'predict_proba'
-    if not hasattr(model, "predict_proba"):
-        raise RuntimeError("Le modèle chargé ne possède pas predict_proba()")
-
-    print("✅ Modèle LGBMClassifier chargé avec succès !")
-
 except Exception as e:
     raise RuntimeError(f"Erreur lors du chargement du modèle: {str(e)}")
 
 class ClientID(BaseModel):
     id_client: int
 
+# Dictionnaire pour charger les données une seule fois
+data_cache = {}
+
 @app.get("/")
 def home():
     return {"message": "API MLflow en cours d'exécution !"}
 
 def load_data():
-    file_path = "C:/Users/yosra/Downloads/Mon_Projet/data_test.csv"
-    if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="Fichier test introuvable")
-    df = pd.read_csv(file_path)
-    if "SK_ID_CURR" not in df.columns:
-        raise HTTPException(status_code=500, detail="Erreur: colonne SK_ID_CURR absente du fichier CSV")
-    df["SK_ID_CURR"] = pd.to_numeric(df["SK_ID_CURR"], errors="coerce")
-    df = df.dropna(subset=["SK_ID_CURR"])
-    df["SK_ID_CURR"] = df["SK_ID_CURR"].astype(int)
-    return df
+    if not data_cache:  # Charger les données si elles ne sont pas déjà dans le cache
+        file_path = "C:/Users/yosra/Downloads/Mon_Projet/data_test.csv"
+        if not os.path.exists(file_path):
+            raise HTTPException(status_code=404, detail="Fichier test introuvable")
+        df = pd.read_csv(file_path)
+        if "SK_ID_CURR" not in df.columns:
+            raise HTTPException(status_code=500, detail="Erreur: colonne SK_ID_CURR absente du fichier CSV")
+        df["SK_ID_CURR"] = pd.to_numeric(df["SK_ID_CURR"], errors="coerce")
+        df = df.dropna(subset=["SK_ID_CURR"])
+        df["SK_ID_CURR"] = df["SK_ID_CURR"].astype(int)
+        data_cache["df"] = df  # Sauvegarder les données dans le cache
+    return data_cache["df"]
 
 @app.post("/predict")
 def predict(client: ClientID):
@@ -85,6 +81,7 @@ def predict(client: ClientID):
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 8000))  
+    port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
+
 
