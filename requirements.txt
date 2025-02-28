@@ -11,3 +11,4 @@ lightgbm==3.3.2
 python-dotenv==0.21.0
 altair==4.2.2 
 shap
+evidently
