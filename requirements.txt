@@ -13,3 +13,4 @@ plotly==5.10.0
 requests==2.28.2
 streamlit==1.14.0
 lightgbm==3.3.2
+altair
