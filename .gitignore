@@ -1,8 +1,9 @@
 # Ignorer les gros fichiers de données
-*.csv
 *.xlsx
 data/
 mlruns/
 __pycache__/
 *.log
 
+# NE PAS ignorer le dossier model/
+!model/
