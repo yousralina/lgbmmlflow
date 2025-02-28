@@ -7,7 +7,7 @@ import os
 app = FastAPI()
 
 # Charger le modèle via MLflow
-model_uri = "model/LGBM_Undersampling_Pipeline"
+model_uri = 'runs:/15a09831c7cc44fe906abf30f8b39a22/LGBM_Undersampling_Pipeline'
 try:
     model = mlflow.pyfunc.load_model(model_uri)
 
