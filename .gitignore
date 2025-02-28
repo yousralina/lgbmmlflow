@@ -1,4 +1,4 @@
-# Ignorer les gros fichiers de données
+# Ignorer les fichiers volumineux et dossiers spécifiques
 *.xlsx
 data/
 mlruns/
