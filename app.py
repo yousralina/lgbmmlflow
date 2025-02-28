@@ -6,23 +6,23 @@ import os
 
 app = FastAPI()
 
-import lightgbm as lgb
-
-model_path = "model/LGBM_Undersampling_Pipeline/lgb_model.txt"
-
+# Charger le modèle via MLflow
+model_uri = "file:///C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/mon_projet_api/model/LGBM_Undersampling_Pipeline"
 try:
-    # Charger le modèle LightGBM
-    model = lgb.Booster(model_file=model_path)
+    model = mlflow.pyfunc.load_model(model_uri)
 
-    # Vérifier si le modèle est prêt à l'emploi
-    if not hasattr(model, "predict"):
-        raise RuntimeError("Le modèle chargé ne possède pas predict()")
-    
-    print("✅ Modèle LightGBM chargé avec succès via LightGBM !")
+    # Extraire le vrai modèle LightGBM s'il est encapsulé
+    if hasattr(model, "unwrap_python_model"):
+        model = model.unwrap_python_model().model  # Accède à l'attribut 'model' de CustomModel
+
+    # Vérifier que le modèle possède bien 'predict_proba'
+    if not hasattr(model, "predict_proba"):
+        raise RuntimeError("Le modèle chargé ne possède pas predict_proba()")
+
+    print("✅ Modèle LGBMClassifier chargé avec succès !")
 
 except Exception as e:
     raise RuntimeError(f"Erreur lors du chargement du modèle: {str(e)}")
-
 
 class ClientID(BaseModel):
     id_client: int
