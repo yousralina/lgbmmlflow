@@ -51,7 +51,7 @@ def load_model():
 # Fonction API prédiction avec Heroku
 @st.cache_data
 def get_prediction_from_api(client_id):
-    API_url = f"https://mlflowlgbmapi-69a75032435a.herokuapp.com/predict"  # URL de votre API Heroku
+    API_url = f"https://apimlflowlgbm-932ffe55319a.herokuapp.com/"  # URL de votre API Heroku
     data = json.dumps({"id_client": client_id})
     headers = {"Content-Type": "application/json"}
     
@@ -194,7 +194,7 @@ def load_model():
 # Fonction pour obtenir la prédiction à partir de l'API
 @st.cache_data
 def get_prediction_from_api(client_id):
-    API_url = f"https://mlflowlgbmapi-69a75032435a.herokuapp.com/predict"
+    API_url = f"https://apimlflowlgbm-932ffe55319a.herokuapp.com/"
     data = json.dumps({"id_client": client_id})
     headers = {"Content-Type": "application/json"}
     
