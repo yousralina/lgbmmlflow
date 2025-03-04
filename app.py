@@ -27,7 +27,7 @@ except Exception as e:
 class ClientID(BaseModel):
     id_client: int
 
-@app.post("/")
+@app.get("/")
 def home():
     return {"message": "API MLflow en cours d'exécution !"}
 
@@ -45,6 +45,7 @@ def load_data():
     df = df.dropna(subset=["SK_ID_CURR"])
     df["SK_ID_CURR"] = df["SK_ID_CURR"].astype(int)
     return df
+
 @app.post("/predict")
 def predict(client: ClientID):
     try:
@@ -83,4 +84,5 @@ if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))  
     uvicorn.run(app, host="0.0.0.0", port=port)
+
 
