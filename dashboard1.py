@@ -18,36 +18,19 @@ st.set_page_config(page_title="Mon Dashboard", page_icon="favicon.ico")
 # Ignorer les avertissements
 warnings.filterwarnings("ignore")
 
-import pandas as pd
-import streamlit as st
-import os
-
+# Chargement des données
 @st.cache_data
 def load_data():
     try:
-        # Utilisation des chemins relatifs
-        data_test_path = os.path.join(os.path.dirname(__file__), 'data_test.csv')
-        data_clean_path = os.path.join(os.path.dirname(__file__), 'data_clean.csv')
-        description_path = os.path.join(os.path.dirname(__file__), 'HomeCredit_columns_description.csv')
-        
-        # Charger les données
-        df = pd.read_csv(data_test_path)  # Données de test pour les prédictions
-        data_clean = pd.read_csv(data_clean_path)  # Données nettoyées pour l'entraînement du modèle
-        description = pd.read_csv(description_path, usecols=['Row', 'Description'], index_col=0, encoding='unicode_escape')
-        
+        df = pd.read_csv('data_test.csv')  # Données de test pour les prédictions
+        data_clean = pd.read_csv('data_clean.csv')  # Données nettoyées pour l'entraînement du modèle
+        description = pd.read_csv('HomeCredit_columns_description.csv', usecols=['Row', 'Description'], index_col=0, encoding='unicode_escape')
         return df, data_clean, description
     except Exception as e:
         st.error(f"Erreur lors du chargement des données : {e}")
         return None, None, None
 
-# Charger les données
 df, data_clean, description = load_data()
-
-if df is not None:
-    st.write(df.head())  # Afficher les premières lignes des données de test
-else:
-    st.write("Aucune donnée disponible.")
-
 
 # Charger le modèle depuis MLflow
 @st.cache_resource
@@ -56,7 +39,7 @@ def load_model():
     # model_uri = "runs:/15a09831c7cc44fe906abf30f8b39a22/LGBM_Undersampling_Pipeline"
     
     # Option 2 : Charger directement depuis le fichier
-     #model_uri = "C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/LGBM_Undersampling_Pipeline"
+    model_uri = "C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/LGBM_Undersampling_Pipeline"
     
     try:
         model = mlflow.sklearn.load_model(model_uri)
@@ -68,7 +51,7 @@ def load_model():
 # Fonction API prédiction avec Heroku
 @st.cache_data
 def get_prediction_from_api(client_id):
-    API_url = f"https://apimlflowlgbm-932ffe55319a-6cd14c48bc7e.herokuapp.com/"  # URL de votre API Heroku
+    API_url = f"https://apimlflowlgbm-932ffe55319a.herokuapp.com/"  # URL de votre API Heroku
     data = json.dumps({"id_client": client_id})
     headers = {"Content-Type": "application/json"}
     
@@ -177,7 +160,7 @@ if int(id_client) in df["SK_ID_CURR"].values:
                 values=avg_values,
                 hole=0.5,
                 name="Moyenne des Clients",
-                marker_colors=["#7451EB", "#A78BFA", "#D1C4E9"],  
+                marker_colors=["#7451EB", "#A78BFA", "#D1C4E9"],  # Couleurs OpenClassrooms
                 textinfo="percent+label",
                 domain={"x": [0.55, 1]}  # Position du deuxième anneau
             ))
@@ -211,7 +194,7 @@ def load_model():
 # Fonction pour obtenir la prédiction à partir de l'API
 @st.cache_data
 def get_prediction_from_api(client_id):
-    API_url = f"https://apimlflowlgbm-932ffe55319a-6cd14c48bc7e.herokuapp.com/"
+    API_url = f"https://apimlflowlgbm-932ffe55319a.herokuapp.com/"
     data = json.dumps({"id_client": client_id})
     headers = {"Content-Type": "application/json"}
     
