@@ -27,7 +27,7 @@ except Exception as e:
 class ClientID(BaseModel):
     id_client: int
 
-@app.get("/")
+@app.post("/")
 def home():
     return {"message": "API MLflow en cours d'exécution !"}
 
@@ -45,10 +45,11 @@ def load_data():
     df = df.dropna(subset=["SK_ID_CURR"])
     df["SK_ID_CURR"] = df["SK_ID_CURR"].astype(int)
     return df
-
 @app.post("/predict")
 def predict(client: ClientID):
     try:
+        print(f"Requête reçue avec les données: {client}")
+
         df = load_data()
 
         if client.id_client not in df["SK_ID_CURR"].values:
@@ -76,6 +77,7 @@ def predict(client: ClientID):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur de prédiction: {str(e)}")
+
 
 if __name__ == "__main__":
     import uvicorn
