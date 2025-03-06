@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+mlflow
+lightgbm
+pandas
+numpy
+scikit-learn
+requests
+gunicorn
