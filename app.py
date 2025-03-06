@@ -49,11 +49,6 @@ def load_data():
 @app.post("/predict")
 def predict(client: ClientID):
     try:
-<<<<<<< HEAD
-=======
-        print(f"Requête reçue avec les données: {client}")
-
->>>>>>> 700026dda469e47602bcab2aaddd38a150f3bef3
         df = load_data()
 
         if client.id_client not in df["SK_ID_CURR"].values:
@@ -82,16 +77,8 @@ def predict(client: ClientID):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur de prédiction: {str(e)}")
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 700026dda469e47602bcab2aaddd38a150f3bef3
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))  
     uvicorn.run(app, host="0.0.0.0", port=port)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 700026dda469e47602bcab2aaddd38a150f3bef3
