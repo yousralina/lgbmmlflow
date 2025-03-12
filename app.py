@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 import mlflow.pyfunc
 import pandas as pd
+import shap
 from pydantic import BaseModel
 import os
 
@@ -46,6 +47,15 @@ def load_data():
     df["SK_ID_CURR"] = df["SK_ID_CURR"].astype(int)
     return df
 
+# Charger les données et créer l'explainer SHAP
+try:
+    data_test = load_data()
+    feature_columns = [col for col in data_test.columns if col != "SK_ID_CURR"]
+    explainer = shap.Explainer(model.predict, data_test[feature_columns])
+    print("✅ Explainer SHAP chargé avec succès !")
+except Exception as e:
+    raise RuntimeError(f"Erreur lors de l'initialisation de SHAP: {str(e)}")
+
 @app.post("/predict")
 def predict(client: ClientID):
     try:
@@ -62,8 +72,6 @@ def predict(client: ClientID):
         prediction = model.predict(client_data)
         prediction_proba = model.predict_proba(client_data)
 
-        print(f"Prediction Proba: {prediction_proba}")
-
         if prediction_proba.shape[1] < 2:
             raise HTTPException(status_code=500, detail="Le modèle ne renvoie pas de probabilités pour la classe 1.")
 
@@ -72,7 +80,17 @@ def predict(client: ClientID):
         if prob < 0 or prob > 1:
             raise HTTPException(status_code=500, detail="Probabilité invalide renvoyée.")
 
-        return {"id_client": client.id_client, "prediction": int(prediction[0]), "probability": prob}
+        # Calcul des valeurs SHAP pour le client
+        shap_values = explainer(client_data)
+        # Convertir les valeurs SHAP en dictionnaire avec les noms des caractéristiques
+        shap_values_dict = {feature_columns[i]: float(shap_values.values[0][i]) for i in range(len(feature_columns))}
+
+        return {
+            "id_client": client.id_client,
+            "prediction": int(prediction[0]),
+            "probability": prob,
+            "shap_values": shap_values_dict
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur de prédiction: {str(e)}")
@@ -81,4 +99,3 @@ if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))  
     uvicorn.run(app, host="0.0.0.0", port=port)
-
