@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import json
 import requests
-import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import shap
 import mlflow
