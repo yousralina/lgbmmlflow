@@ -17,18 +17,25 @@ st.set_page_config(page_title="Mon Dashboard", page_icon="favicon.ico")
 # Ignorer les avertissements
 warnings.filterwarnings("ignore")
 
-# Chargement des données
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_csv('data_test.csv')  # Données de test pour les prédictions
-        data_clean = pd.read_csv('data_clean.csv')  # Données nettoyées pour l'entraînement du modèle
-        description = pd.read_csv('HomeCredit_columns_description.csv', usecols=['Row', 'Description'], index_col=0, encoding='unicode_escape')
+        # Utilisation des chemins relatifs
+        data_test_path = os.path.join(os.path.dirname(__file__),  'data_test.csv')
+        data_clean_path = os.path.join(os.path.dirname(__file__), 'data_clean.csv')
+        description_path = os.path.join(os.path.dirname(__file__), 'HomeCredit_columns_description.csv')
+        
+        # Charger les données
+        df = pd.read_csv(data_test_path)  # Données de test pour les prédictions
+        data_clean = pd.read_csv(data_clean_path)  # Données nettoyées pour l'entraînement du modèle
+        description = pd.read_csv(description_path, usecols=['Row', 'Description'], index_col=0, encoding='unicode_escape')
+        
         return df, data_clean, description
     except Exception as e:
         st.error(f"Erreur lors du chargement des données : {e}")
         return None, None, None
 
+# Charger les données
 df, data_clean, description = load_data()
 
 # Charger le modèle depuis MLflow
