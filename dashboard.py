@@ -17,9 +17,6 @@ st.set_page_config(page_title="Mon Dashboard", page_icon="favicon.ico")
 
 # Ignorer les avertissements
 warnings.filterwarnings("ignore")
-
-import pandas as pd
-import streamlit as st
 import os
 
 @st.cache_data
@@ -43,10 +40,6 @@ def load_data():
 # Charger les données
 df, data_clean, description = load_data()
 
-if df is not None:
-    st.write(df.head())  # Afficher les premières lignes des données de test
-else:
-    st.write("Aucune donnée disponible.")
 
 
 # Charger le modèle depuis MLflow
@@ -68,7 +61,7 @@ def load_model():
 # Fonction API prédiction avec Heroku
 @st.cache_data
 def get_prediction_from_api(client_id):
-    API_url = f"https://apimlflowlgbm-932ffe55319a.herokuapp.com/predict"  # URL de votre API Heroku
+    API_url = f"https://applicationmlflowdash-6ac6d5ea24de.herokuapp.com/predict"  # URL de votre API Heroku
     data = json.dumps({"id_client": client_id})
     headers = {"Content-Type": "application/json"}
     
@@ -229,45 +222,107 @@ if int(id_client) in df["SK_ID_CURR"].values:
 
             # Afficher le graphique dans Streamlit
             st.plotly_chart(fig)
-
-import numpy as np
+# Section pour l'explication avec SHAP
+import mlflow
 import shap
-import matplotlib.pyplot as plt
-import streamlit as st
+import lightgbm as lgb
 
-# Assurez-vous que client_id est un entier Python classique
-client_id = int(df["SK_ID_CURR"].iloc[0])
-prediction_result = get_prediction_from_api(client_id)
-
-if prediction_result and "prediction" in prediction_result:
+# Fonction pour charger le modèle pyfunc depuis MLflow
+@st.cache_resource
+def load_model():
+    model_uri = "C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/LGBM_Undersampling_Pipeline"
     try:
-        # Récupérer les données du client depuis le dataframe nettoyé
-        client_data = data_clean.loc[data_clean["SK_ID_CURR"] == client_id]
-        if not client_data.empty:
-            # Supprimer les colonnes non pertinentes
-            client_data_without_target = client_data.drop(columns=["SK_ID_CURR", "TARGET"], errors="ignore")
-            
-            # Récupérer les valeurs SHAP du résultat de la prédiction
-            shap_values = prediction_result.get("shap_values", [])
-            
-            if shap_values:
-                # Créer le graphique de résumé SHAP
+        # Charger le modèle en tant que pyfunc
+        model = mlflow.pyfunc.load_model(model_uri)
+        return model
+    except Exception as e:
+        st.error(f"Erreur lors du chargement du modèle : {e}")
+        return None
+
+# Section pour l'explication avec SHAP
+import mlflow
+import shap
+import lightgbm as lgb
+
+# Fonction pour charger le modèle pyfunc depuis MLflow
+@st.cache_resource
+def load_model():
+    model_uri = "C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/LGBM_Undersampling_Pipeline"
+    try:
+        # Charger le modèle en tant que pyfunc
+        model = mlflow.pyfunc.load_model(model_uri)
+        return model
+    except Exception as e:
+        st.error(f"Erreur lors du chargement du modèle : {e}")
+        return None
+
+# Section pour l'explication avec SHAP
+import mlflow
+import shap
+import lightgbm as lgb
+import streamlit as st
+import matplotlib.pyplot as plt
+
+# Fonction pour charger le modèle LightGBM depuis MLflow
+@st.cache_resource
+def load_model():
+    model_uri = "mlflow-artifacts:/970618126747358610/9367d103f9b14eafbfad7071648c2164/artifacts/LGBM_Undersampling_Pipeline"
+    try:
+        # Charger le modèle LightGBM directement
+        model = mlflow.lightgbm.load_model(model_uri)
+        return model
+    except Exception as e:
+        st.error(f"Erreur lors du chargement du modèle : {e}")
+        return None
+
+# Section pour l'explication avec SHAP
+import mlflow
+import shap
+import lightgbm as lgb
+import streamlit as st
+import matplotlib.pyplot as plt
+
+# Fonction pour charger le modèle LightGBM depuis un chemin local
+@st.cache_resource
+def load_model():
+    model_uri = "file:///C:/Users/yosra/mlartifacts/970618126747358610/9367d103f9b14eafbfad7071648c2164/artifacts/LGBM_Undersampling_Pipeline"
+    try:
+        # Charger le modèle LightGBM directement depuis le chemin local
+        model = mlflow.lightgbm.load_model(model_uri)
+        return model
+    except Exception as e:
+        st.error(f"Erreur lors du chargement du modèle : {e}")
+        return None
+
+# Section pour l'explication avec SHAP
+if shap_general:
+    st.header("🔍 Explication des décisions avec SHAP")
+    model = load_model()
+
+    if model is not None:
+        try:
+            # Vérifier que le modèle est de type LightGBM
+            if isinstance(model, lgb.sklearn.LGBMClassifier):
+                # Préparer les données sans la colonne cible
+                client_data_without_target = client_info.drop(columns=["SK_ID_CURR", "TARGET"], errors="ignore")
+
+                # Calculer les valeurs SHAP
+                explainer = shap.TreeExplainer(model)
+                shap_values = explainer.shap_values(client_data_without_target)
+
+                # Afficher le graphique SHAP
                 fig, ax = plt.subplots()
-                shap.summary_plot(np.array(shap_values), client_data_without_target, plot_type="bar", show=False)
+                shap.summary_plot(shap_values, client_data_without_target, plot_type="bar", show=False)
+                ax.set_facecolor("#1C1C1C")  # Fond sombre
+                fig.patch.set_facecolor("#1C1C1C")  # Fond sombre
                 st.pyplot(fig)
             else:
-                st.error("Aucune valeur SHAP reçue de l'API.")
-        else:
-            st.error("Aucune donnée client trouvée.")
-    except Exception as e:
-        st.error(f"Erreur lors du calcul de SHAP : {e}")
+                st.error("Le modèle chargé n'est pas un modèle LightGBM.")
+        except Exception as e:
+            st.error(f"Erreur lors du calcul de SHAP : {e}")
 
-import streamlit as st
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-from evidently.report import Report
-from evidently.metric_preset import DataDriftPreset
+
+
 
 import streamlit as st
 import pandas as pd
