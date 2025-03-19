@@ -228,7 +228,7 @@ if int(id_client) in df["SK_ID_CURR"].values:
 # Fonction pour charger le modèle LGBM à partir du pipeline
 @st.cache_resource
 def load_model():
-    model_uri = "C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/LGBM_Undersampling_Pipeline"
+    model_uri = r"C:\Users\yosra\mlartifacts\970618126747358610\15a09831c7cc44fe906abf30f8b39a22\artifacts\mon_projet_api\model\LGBM_Undersampling_Pipeline"
     try:
         model = mlflow.sklearn.load_model(model_uri)
         return model
@@ -259,7 +259,7 @@ import lightgbm as lgb
 # Fonction pour charger le modèle pyfunc depuis MLflow
 @st.cache_resource
 def load_model():
-    model_uri = "C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/LGBM_Undersampling_Pipeline"
+    model_uri = r"C:\Users\yosra\mlartifacts\970618126747358610\15a09831c7cc44fe906abf30f8b39a22\artifacts\mon_projet_api\model\LGBM_Undersampling_Pipeline"
     try:
         # Charger le modèle en tant que pyfunc
         model = mlflow.pyfunc.load_model(model_uri)
@@ -276,7 +276,7 @@ import lightgbm as lgb
 # Fonction pour charger le modèle pyfunc depuis MLflow
 @st.cache_resource
 def load_model():
-    model_uri = "C:\Users\yosra\mlartifacts\970618126747358610\15a09831c7cc44fe906abf30f8b39a22\artifacts\mon_projet_api\model\LGBM_Undersampling_Pipeline"
+    model_uri = r"C:\Users\yosra\mlartifacts\970618126747358610\15a09831c7cc44fe906abf30f8b39a22\artifacts\mon_projet_api\model\LGBM_Undersampling_Pipeline"
     try:
         # Charger le modèle en tant que pyfunc
         model = mlflow.pyfunc.load_model(model_uri)
@@ -295,7 +295,7 @@ import matplotlib.pyplot as plt
 # Fonction pour charger le modèle LightGBM depuis MLflow
 @st.cache_resource
 def load_model():
-    model_uri = "C:\Users\yosra\mlartifacts\970618126747358610\15a09831c7cc44fe906abf30f8b39a22\artifacts\mon_projet_api\model\LGBM_Undersampling_Pipeline"
+    model_uri = r"C:\Users\yosra\mlartifacts\970618126747358610\15a09831c7cc44fe906abf30f8b39a22\artifacts\mon_projet_api\model\LGBM_Undersampling_Pipeline"
     try:
         # Charger le modèle LightGBM directement
         model = mlflow.lightgbm.load_model(model_uri)
@@ -314,7 +314,7 @@ import matplotlib.pyplot as plt
 # Fonction pour charger le modèle LightGBM depuis un chemin local
 @st.cache_resource
 def load_model():
-    model_uri = "C:\Users\yosra\mlartifacts\970618126747358610\15a09831c7cc44fe906abf30f8b39a22\artifacts\mon_projet_api\model\LGBM_Undersampling_Pipeline"
+    model_uri = r"C:\Users\yosra\mlartifacts\970618126747358610\15a09831c7cc44fe906abf30f8b39a22\artifacts\mon_projet_api\model\LGBM_Undersampling_Pipeline"
     try:
         # Charger le modèle LightGBM directement depuis le chemin local
         model = mlflow.lightgbm.load_model(model_uri)
