@@ -43,7 +43,7 @@ def load_model():
     # model_uri = "runs:/15a09831c7cc44fe906abf30f8b39a22/LGBM_Undersampling_Pipeline"
     
     # Option 2 : Charger directement depuis le fichier
-    model_uri = "C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/LGBM_Undersampling_Pipeline"
+    #model_uri = "C:/Users/yosra/mlartifacts/970618126747358610/15a09831c7cc44fe906abf30f8b39a22/artifacts/LGBM_Undersampling_Pipeline"
     
     try:
         model = mlflow.sklearn.load_model(model_uri)
