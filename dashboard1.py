@@ -286,49 +286,6 @@ def load_model():
         return None
 
 # Section pour l'explication avec SHAP
-import mlflow
-import shap
-import lightgbm as lgb
-import streamlit as st
-import matplotlib.pyplot as plt
-
-# Fonction pour charger le modèle LightGBM depuis MLflow
-@st.cache_resource
-def load_model():
-    model_uri = r"C:\Users\yosra\mlartifacts\970618126747358610\15a09831c7cc44fe906abf30f8b39a22\artifacts\mon_projet_api\model\LGBM_Undersampling_Pipeline"
-    try:
-        # Charger le modèle LightGBM directement
-        model = mlflow.lightgbm.load_model(model_uri)
-        return model
-    except Exception as e:
-        st.error(f"Erreur lors du chargement du modèle : {e}")
-        return None
-
-# Section pour l'explication avec SHAP
-import mlflow
-import shap
-import lightgbm as lgb
-import streamlit as st
-import matplotlib.pyplot as plt
-
-# Fonction pour charger le modèle LightGBM depuis un chemin local
-@st.cache_resource
-def load_model():
-    model_uri = r"C:\Users\yosra\mlartifacts\970618126747358610\15a09831c7cc44fe906abf30f8b39a22\artifacts\mon_projet_api\model\LGBM_Undersampling_Pipeline"
-    try:
-        # Charger le modèle LightGBM directement depuis le chemin local
-        model = mlflow.lightgbm.load_model(model_uri)
-        return model
-    except Exception as e:
-        st.error(f"Erreur lors du chargement du modèle : {e}")
-        return None
-
-import shap
-import lightgbm as lgb
-import matplotlib.pyplot as plt
-import streamlit as st
-
-# Section pour l'explication avec SHAP
 if shap_general:
     st.header("🔍 Explication des décisions avec SHAP")
     model = load_model()
