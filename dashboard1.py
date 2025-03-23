@@ -285,11 +285,6 @@ def load_model():
         st.error(f"Erreur lors du chargement du modèle : {e}")
         return None
 
-# Section pour l'explication avec SHAP
-if shap_general:
-    st.header("🔍 Explication des décisions avec SHAP")
-    model = load_model()
-
     if model is not None:
         try:
             # Vérifier que le modèle est de type LightGBM
