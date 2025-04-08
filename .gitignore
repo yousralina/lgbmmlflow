@@ -1,9 +1,0 @@
-# Ignorer les fichiers volumineux et dossiers spécifiques
-*.xlsx
-data/
-mlruns/
-__pycache__/
-*.log
-
-# NE PAS ignorer le dossier model/
-!model/
