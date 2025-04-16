@@ -1,9 +1,10 @@
 # Ignorer les fichiers volumineux et dossiers spécifiques
-*.xlsx
-data/
-mlruns/
-__pycache__/
-*.log
+lgbmmlflow/
+restauration_temp/
+*.pkl
+*.csv
+*.joblib
+
 
 # NE PAS ignorer le dossier model/
 !model/
