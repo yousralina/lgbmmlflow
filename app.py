@@ -47,6 +47,19 @@ def load_data():
     df["SK_ID_CURR"] = df["SK_ID_CURR"].astype(int)
     return df
 
+# Fonction métier : convertir la proba en étiquette de risque
+def get_business_score(prob):
+    if prob >= 0.8:
+        return "Risque très élevé"
+    elif prob >= 0.6:
+        return "Risque élevé"
+    elif prob >= 0.4:
+        return "Risque modéré"
+    elif prob >= 0.2:
+        return "Risque faible"
+    else:
+        return "Risque très faible"
+
 # Charger les données et créer l'explainer SHAP
 try:
     data_test = load_data()
@@ -82,13 +95,16 @@ def predict(client: ClientID):
 
         # Calcul des valeurs SHAP pour le client
         shap_values = explainer(client_data)
-        # Convertir les valeurs SHAP en dictionnaire avec les noms des caractéristiques
         shap_values_dict = {feature_columns[i]: float(shap_values.values[0][i]) for i in range(len(feature_columns))}
+
+        # Score métier
+        business_score = get_business_score(prob)
 
         return {
             "id_client": client.id_client,
             "prediction": int(prediction[0]),
             "probability": prob,
+            "risque_metier": business_score,
             "shap_values": shap_values_dict
         }
 
